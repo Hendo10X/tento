@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const topTenCards = [
   {
@@ -175,11 +176,12 @@ export default function Home() {
           make you, you. What's on your list?
         </p>
 
-        <button
-          className="animate-fade-up mt-1 cursor-pointer rounded-lg bg-tento-lavender px-10 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-tento-lavender-hover sm:px-16 sm:py-3 sm:text-sm"
+        <Link
+          href="/sign-in"
+          className="animate-fade-up mt-1 inline-flex cursor-pointer items-center justify-center rounded-lg bg-tento-lavender px-10 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-tento-lavender-hover sm:px-16 sm:py-3 sm:text-sm"
           style={{ animationDelay: "240ms" }}>
           Log in
-        </button>
+        </Link>
       </div>
 
       <div className="pointer-events-none absolute inset-0">
