@@ -33,9 +33,9 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (!session?.user) return;
-    if (session.user.name) setDisplayName(session.user.name);
-    else if ((session.user as { username?: string }).username)
-      setDisplayName((session.user as { username?: string }).username ?? "");
+    const user = session.user as { name?: string; username?: string };
+    if (user.name) setDisplayName(user.name);
+    else if (user.username) setDisplayName(user.username);
   }, [session]);
 
   useEffect(() => {
