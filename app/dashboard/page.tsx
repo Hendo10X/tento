@@ -13,7 +13,10 @@ import {
   Pencil,
   Trash2,
   Share2,
+  LayoutList,
+  LayoutGrid,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { createList, getLists, updateList, deleteList } from "@/server/list";
@@ -35,6 +38,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const SUGGESTED_TAGS = [
   "Sports",
@@ -324,7 +337,9 @@ export default function Dashboard() {
   const [createOpen, setCreateOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editList, setEditList] = useState<ListWithDetails | null>(null);
+  const [deleteListId, setDeleteListId] = useState<string | null>(null);
   const [lists, setLists] = useState<ListWithDetails[]>([]);
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
 
   const displayName = session?.user?.name || "User";
   const initial = displayName.charAt(0).toUpperCase();
@@ -356,8 +371,12 @@ export default function Dashboard() {
     setEditOpen(true);
   };
 
-  const handleDelete = async (listId: string) => {
-    if (!confirm("Delete this list?")) return;
+  const handleDeleteClick = (listId: string) => setDeleteListId(listId);
+
+  const handleDeleteConfirm = async () => {
+    const listId = deleteListId;
+    if (!listId) return;
+    setDeleteListId(null);
     try {
       await deleteList(listId);
       toast.success("List deleted");
@@ -395,7 +414,7 @@ export default function Dashboard() {
       : undefined;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <header className="flex items-center justify-between px-6 py-5">
         <Image
           src="/images/tentologo.svg"
@@ -406,37 +425,42 @@ export default function Dashboard() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex cursor-pointer items-center gap-2 rounded-full py-0.5 pl-0.5 pr-2.5 transition-colors hover:bg-neutral-50">
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 400, damping: 28 }}
+              className="flex cursor-pointer items-center gap-2 rounded-full py-1 pl-1 pr-3 transition-colors hover:bg-neutral-50"
+            >
               {session?.user?.image ? (
                 session.user.image.startsWith("data:") ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={session.user.image}
-                    alt={displayName}
-                    className="h-7 w-7 rounded-full object-cover"
+                  src={session.user.image}
+                  alt={displayName}
+                  className="h-8 w-8 rounded-full object-cover"
                   />
                 ) : (
                   <Image
                     src={session.user.image}
                     alt={displayName}
-                    width={28}
-                    height={28}
+                    width={32}
+                    height={32}
                     className="rounded-full object-cover"
                   />
                 )
               ) : (
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-200 text-xs font-semibold text-amber-800">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-200 text-sm font-semibold text-amber-800">
                   {initial}
                 </div>
               )}
-              <span className="text-xs font-medium text-foreground">
+              <span className="text-sm font-medium text-foreground">
                 {displayName}
               </span>
-            </button>
+            </motion.button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuContent align="end" className="w-44">
             <DropdownMenuLabel className="font-normal">
-              <span className="text-xs text-neutral-500">
+              <span className="text-sm text-neutral-500">
                 tento/{session?.user?.name || "user"}
               </span>
             </DropdownMenuLabel>
@@ -467,47 +491,89 @@ export default function Dashboard() {
       </header>
 
       <main className="px-6 pb-12 pt-4">
-        <div className="mx-auto max-w-lg space-y-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCreateOpen(true)}
-            className="cursor-pointer gap-1.5 border-neutral-200 text-xs font-medium text-foreground"
-          >
-            Create a new list
-            <Plus className="h-3.5 w-3.5" />
-          </Button>
+        <div className="mx-auto max-w-xl space-y-5">
+          <div className="flex items-center justify-between gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCreateOpen(true)}
+              className="cursor-pointer gap-2 border-neutral-200 text-sm font-medium text-foreground"
+            >
+              Create a new list
+              <Plus className="h-4 w-4" />
+            </Button>
+            {lists.length > 0 && (
+              <div className="flex items-center rounded-lg border border-neutral-200 p-0.5">
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={`flex h-8 w-8 items-center justify-center rounded-md transition-colors ${
+                    viewMode === "list"
+                      ? "bg-neutral-100 text-foreground"
+                      : "text-neutral-500 hover:bg-neutral-50 hover:text-foreground"
+                  }`}
+                  aria-label="List view"
+                >
+                  <LayoutList className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`flex h-8 w-8 items-center justify-center rounded-md transition-colors ${
+                    viewMode === "grid"
+                      ? "bg-neutral-100 text-foreground"
+                      : "text-neutral-500 hover:bg-neutral-50 hover:text-foreground"
+                  }`}
+                  aria-label="Grid view"
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+          </div>
 
           {lists.length === 0 ? (
-            <p className="pt-8 text-center text-xs text-neutral-400">
+            <p className="pt-8 text-center text-sm text-neutral-400">
               No lists yet. Create one above.
             </p>
           ) : (
-            <div className="space-y-3">
+            <motion.div
+              layout
+              transition={{ type: "spring", stiffness: 350, damping: 30 }}
+              className={`group/cards ${
+                viewMode === "list"
+                  ? "flex flex-col gap-4"
+                  : "grid grid-cols-1 gap-4 sm:grid-cols-2"
+              }`}
+            >
               {lists.map((l: ListWithDetails) => (
-                <div
+                <motion.div
                   key={l.id}
-                  className="flex items-center justify-between gap-2 rounded-xl border border-neutral-200 bg-white px-4 py-3"
+                  layout
+                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-background px-5 py-4 transition-[opacity,filter,border-color] duration-300 ease-out group-has-[:hover]/cards:opacity-50 group-has-[:hover]/cards:blur-[1px] hover:opacity-100! hover:blur-none! hover:border-tento-lavender/50"
                 >
                   <div className="min-w-0 flex-1">
                     <Link
                       href={`/u/${(session?.user?.name || session?.user?.username || "user").toString().toLowerCase()}/${l.slug}`}
-                      className="block truncate font-heading text-xs font-medium text-foreground hover:text-tento-lavender"
+                      className={`block text-sm font-medium text-foreground ${
+                        viewMode === "grid"
+                          ? "line-clamp-2 wrap-break-word"
+                          : "truncate"
+                      }`}
                     >
                       {l.name}
                     </Link>
                     {(l.tags.length > 0 || l.createdAt) && (
-                      <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                      <div className="mt-1.5 flex flex-wrap items-center gap-2">
                         {l.tags.map((tag: string) => (
                           <span
                             key={tag}
-                            className="rounded-full border border-neutral-200 px-2 py-0.5 text-[10px] text-neutral-500"
+                            className="rounded-full border border-neutral-200 px-2.5 py-0.5 text-xs text-neutral-500"
                           >
                             {tag}
                           </span>
                         ))}
                         {l.createdAt && (
-                          <span className="text-[10px] text-neutral-400">
+                          <span className="text-xs text-neutral-400">
                             {new Date(l.createdAt).toLocaleDateString(undefined, {
                               month: "short",
                               day: "numeric",
@@ -521,29 +587,29 @@ export default function Dashboard() {
                   <div className="flex shrink-0 items-center gap-1">
                     <button
                       onClick={() => handleEdit(l)}
-                      className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-foreground"
+                      className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-foreground"
                       aria-label="Edit"
                     >
-                      <Pencil className="h-3.5 w-3.5" />
+                      <Pencil className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => handleShare(l)}
-                      className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-foreground"
+                      className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-foreground"
                       aria-label="Share"
                     >
-                      <Share2 className="h-3.5 w-3.5" />
+                      <Share2 className="h-4 w-4" />
                     </button>
                     <button
-                      onClick={() => handleDelete(l.id)}
-                      className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-red-50 hover:text-red-500"
+                      onClick={() => handleDeleteClick(l.id)}
+                      className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-red-50 hover:text-red-500"
                       aria-label="Delete"
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
         </div>
       </main>
@@ -565,6 +631,28 @@ export default function Dashboard() {
         listId={editList?.id}
         initialData={editInitialData}
       />
+      <AlertDialog
+        open={deleteListId !== null}
+        onOpenChange={(open) => !open && setDeleteListId(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this list?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. The list and all its items will be permanently removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-red-500 text-white hover:bg-red-500/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

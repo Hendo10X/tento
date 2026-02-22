@@ -7,7 +7,7 @@
 }
 
 @theme inline {
-  --color-background: #ffffff;
+  --color-background: #fdfdfc;
   --color-foreground: #1a1a1a;
   --color-muted: #6b7280;
   --color-tento-lavender: #c6abde;
@@ -20,6 +20,7 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
+  letter-spacing: -0.02em;
 }
 
 .topic-card {

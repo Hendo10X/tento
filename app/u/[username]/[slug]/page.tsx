@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { AnimatedLink } from "@/components/animated-link";
 import { notFound } from "next/navigation";
 import { getListByUsernameAndSlug } from "@/server/profile";
 
@@ -15,7 +16,7 @@ export default async function ListPage({
   const { list, user, items, tags } = data;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <header className="flex items-center justify-between px-6 py-5">
         <Link href="/" className="shrink-0">
           <Image
@@ -26,7 +27,7 @@ export default async function ListPage({
           />
         </Link>
 
-        <Link
+        <AnimatedLink
           href={`/u/${username}`}
           className="flex cursor-pointer items-center gap-2 rounded-full border border-neutral-200 px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-neutral-50"
         >
@@ -44,41 +45,48 @@ export default async function ListPage({
             />
           </svg>
           Back to {user.name || user.username}&rsquo;s profile
-        </Link>
+        </AnimatedLink>
       </header>
 
-      <main className="mx-auto max-w-xl px-6 pb-16 pt-4">
-        <div className="flex flex-col items-center text-center">
+      <main className="mx-auto max-w-2xl px-6 pb-16 pt-4">
+        <header className="mb-10">
           <h1 className="font-heading text-2xl font-bold uppercase leading-tight tracking-wide text-foreground">
             {list.name}
           </h1>
-
-          {tags.length > 0 && (
-            <div className="mt-3 flex flex-wrap justify-center gap-2">
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full border border-neutral-200 px-2.5 py-0.5 text-xs text-neutral-600"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-
-          <ol className="mt-8 w-full max-w-sm space-y-3 text-left">
-            {items.map((item, i) => (
-              <li key={item.id} className="flex gap-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-xs font-semibold text-neutral-600">
-                  {i + 1}
-                </span>
-                <span className="pt-0.5 text-sm leading-relaxed text-foreground">
-                  {item.value}
-                </span>
-              </li>
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-neutral-500">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full border border-neutral-200 px-2.5 py-0.5 text-xs text-neutral-600"
+              >
+                {tag}
+              </span>
             ))}
-          </ol>
-        </div>
+            <span className="tabular-nums">
+              {new Date(list.createdAt).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })}
+            </span>
+          </div>
+        </header>
+
+        <ol className="w-full divide-y divide-neutral-200">
+          {items.map((item, i) => (
+            <li
+              key={item.id}
+              className="flex items-center justify-between gap-4 py-3 first:pt-0"
+            >
+              <span className="flex min-w-0 flex-1 text-sm text-foreground">
+                {item.value}
+              </span>
+              <span className="shrink-0 text-sm text-neutral-400 tabular-nums">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+            </li>
+          ))}
+        </ol>
       </main>
     </div>
   );

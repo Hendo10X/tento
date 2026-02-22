@@ -65,7 +65,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-white px-6">
+    <div className="flex h-screen w-full items-center justify-center bg-background px-6">
       <div className="w-full max-w-sm">
         <Image
           src="/images/tentologo.svg"
@@ -87,7 +87,7 @@ export default function SignIn() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <div>
             <div
-              className={`flex h-11 items-center rounded-lg border bg-white transition-colors ${errors.username ? "border-red-400" : "border-neutral-200 focus-within:border-tento-lavender"}`}
+              className={`flex h-11 items-center rounded-lg border bg-background transition-colors ${errors.username ? "border-red-400" : "border-neutral-200 focus-within:border-tento-lavender"}`}
             >
               <span className="pl-4 text-sm text-neutral-400">tento/</span>
               <input
@@ -115,7 +115,7 @@ export default function SignIn() {
                 setPassword(e.target.value);
                 setErrors((prev) => ({ ...prev, password: "" }));
               }}
-              className={`h-11 w-full rounded-lg border bg-white px-4 text-sm text-foreground outline-none transition-colors placeholder:text-neutral-400 focus:border-tento-lavender ${errors.password ? "border-red-400" : "border-neutral-200"}`}
+              className={`h-11 w-full rounded-lg border bg-background px-4 text-sm text-foreground outline-none transition-colors placeholder:text-neutral-400 focus:border-tento-lavender ${errors.password ? "border-red-400" : "border-neutral-200"}`}
             />
             {errors.password && (
               <p className="mt-1 text-xs text-red-500">{errors.password}</p>

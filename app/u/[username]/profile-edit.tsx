@@ -119,26 +119,26 @@ export function ProfileEdit({
     <>
       <button
         onClick={handleOpen}
-        className="absolute -bottom-0.5 -right-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-tento-lavender text-white shadow-sm transition-colors hover:bg-tento-lavender-hover"
+        className="absolute -bottom-0.5 -right-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-tento-lavender text-white shadow-sm transition-colors hover:bg-tento-lavender-hover"
         aria-label="Edit profile"
       >
-        <Pencil className="h-2.5 w-2.5" />
+        <Pencil className="h-3.5 w-3.5" />
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="rounded-2xl p-5 sm:max-w-md">
+        <DialogContent className="rounded-2xl p-6 sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="font-heading text-lg uppercase tracking-wide">
+            <DialogTitle className="font-heading text-xl uppercase tracking-wide">
               Edit profile
             </DialogTitle>
-            <DialogDescription className="text-xs">
+            <DialogDescription className="text-sm">
               Change your avatar and bio
             </DialogDescription>
           </DialogHeader>
 
-          <div className="mt-4 space-y-4">
+          <div className="mt-5 space-y-5">
             <div>
-              <label className="mb-1 block text-xs font-medium text-neutral-500">
+              <label className="mb-1.5 block text-sm font-medium text-neutral-500">
                 Avatar
               </label>
               <input
@@ -148,8 +148,8 @@ export function ProfileEdit({
                 onChange={handleFileChange}
                 className="hidden"
               />
-              <div className="flex items-center gap-3">
-                <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-neutral-100">
+              <div className="flex items-center gap-4">
+                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full bg-neutral-100">
                   {image ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -159,7 +159,7 @@ export function ProfileEdit({
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-neutral-400">
-                      <Upload className="h-6 w-6" />
+                      <Upload className="h-7 w-7" />
                     </div>
                   )}
                 </div>
@@ -170,11 +170,11 @@ export function ProfileEdit({
                     size="sm"
                     disabled={uploading}
                     onClick={() => fileInputRef.current?.click()}
-                    className="h-8 cursor-pointer border-neutral-200 text-xs"
+                    className="h-9 cursor-pointer border-neutral-200 text-sm"
                   >
                     {uploading ? "Processing…" : "Upload image"}
                   </Button>
-                  <p className="mt-1 text-[10px] text-neutral-400">
+                  <p className="mt-1.5 text-xs text-neutral-400">
                     JPG, PNG. Max {MAX_INPUT_MB}MB
                   </p>
                 </div>
@@ -182,7 +182,7 @@ export function ProfileEdit({
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-neutral-500">
+              <label className="mb-1.5 block text-sm font-medium text-neutral-500">
                 Bio
               </label>
               <textarea
@@ -191,9 +191,9 @@ export function ProfileEdit({
                 placeholder="A short bio..."
                 rows={3}
                 maxLength={160}
-                className="w-full resize-none rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-foreground placeholder:text-neutral-400 focus:border-tento-lavender focus:outline-none focus:ring-1 focus:ring-tento-lavender"
+                className="w-full resize-none rounded-md border border-neutral-200 bg-white px-3 py-2.5 text-sm text-foreground placeholder:text-neutral-400 focus:border-tento-lavender focus:outline-none focus:ring-1 focus:ring-tento-lavender"
               />
-              <p className="mt-1 text-[10px] text-neutral-400">
+              <p className="mt-1.5 text-xs text-neutral-400">
                 {bio.length}/160
               </p>
             </div>
@@ -201,7 +201,7 @@ export function ProfileEdit({
             <Button
               onClick={handleSave}
               disabled={loading}
-              className="h-9 w-full cursor-pointer bg-tento-lavender text-xs font-semibold text-white hover:bg-tento-lavender-hover disabled:opacity-60"
+              className="h-10 w-full cursor-pointer bg-tento-lavender text-sm font-semibold text-white hover:bg-tento-lavender-hover disabled:opacity-60"
             >
               {loading ? (
                 <span className="loading-dots">

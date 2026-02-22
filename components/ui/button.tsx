@@ -1,6 +1,9 @@
+"use client";
+
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
@@ -37,13 +40,25 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button";
+    const classes = cn(buttonVariants({ variant, size, className }));
+    if (asChild) {
+      return <Slot className={classes} ref={ref} {...props} />;
+    }
+    const isFullWidth = classes.includes("w-full");
     return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
+      <motion.span
+        className={isFullWidth ? "block w-full" : undefined}
+        style={{ display: isFullWidth ? "block" : "inline-flex" }}
+        whileTap={{ scale: 0.98 }}
+        whileHover={{ scale: 1.015 }}
+        transition={{ type: "spring", stiffness: 400, damping: 28 }}
+      >
+        <button
+          className={classes}
+          ref={ref}
+          {...props}
+        />
+      </motion.span>
     );
   }
 );

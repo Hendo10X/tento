@@ -149,7 +149,7 @@ const topTenCards = [
 
 export default function Home() {
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-white">
+    <div className="relative h-screen w-full overflow-hidden bg-background">
       <div className="flex h-full flex-col items-center justify-center gap-3 px-6 sm:gap-5">
         <Image
           src="/images/tentologo.svg"
