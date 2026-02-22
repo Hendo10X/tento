@@ -84,17 +84,9 @@ export default async function ListPage({
 
       <main className="mx-auto max-w-2xl px-6 pb-16 pt-4">
         <header className="mb-10">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <h1 className="font-heading text-2xl font-bold uppercase leading-tight tracking-wide text-foreground">
-              {list.name}
-            </h1>
-            <ListActions
-              username={username}
-              slug={slug}
-              listName={list.name}
-              items={items}
-            />
-          </div>
+          <h1 className="font-heading text-2xl font-bold uppercase leading-tight tracking-wide text-foreground">
+            {list.name}
+          </h1>
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-neutral-500">
             {tags.map((tag) => (
               <span
@@ -111,6 +103,12 @@ export default async function ListPage({
                 year: "numeric",
               })}
             </span>
+            <span className="text-neutral-300">·</span>
+            <ListActions
+              username={username}
+              slug={slug}
+              listName={list.name}
+            />
           </div>
         </header>
 

@@ -1,5 +1,5 @@
 import { db } from "@/db/drizzle";
-import { user, profile, list, listItem, listTag } from "@/db/schema";
+import { user, list, listItem, listTag } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 
 export async function getProfileOG(username: string) {
@@ -8,30 +8,19 @@ export async function getProfileOG(username: string) {
     .from(user)
     .where(eq(user.username, username.toLowerCase()));
   if (!u) return null;
-
-  const [p] = await db.select().from(profile).where(eq(profile.userId, u.id));
   const lists = await db
     .select()
     .from(list)
     .where(eq(list.userId, u.id))
     .orderBy(desc(list.updatedAt))
-    .limit(3);
+    .limit(10);
 
-  const listsWithItems = await Promise.all(
-    lists.map(async (l) => {
-      const items = await db
-        .select()
-        .from(listItem)
-        .where(eq(listItem.listId, l.id))
-        .orderBy(listItem.rank);
-      return { ...l, items: items.slice(0, 3) };
-    })
-  );
+  const latestDate = lists[0]?.updatedAt ?? new Date();
 
   return {
     name: u.name || u.username || "User",
-    bio: p?.bio?.trim() || null,
-    lists: listsWithItems,
+    lists,
+    date: latestDate,
   };
 }
 

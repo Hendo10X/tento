@@ -33,12 +33,14 @@ export async function GET(
     // Fallback if fetch fails
   }
 
-  const fonts = [];
+  const fonts: { name: string; data: ArrayBuffer; style: "normal"; weight: 400 }[] = [];
   if (adeliaData) {
+    const ab = new ArrayBuffer(adeliaData.length);
+    new Uint8Array(ab).set(adeliaData);
     fonts.push({
       name: "Adelia",
-      data: adeliaData,
-      style: "normal" as const,
+      data: ab,
+      style: "normal",
       weight: 400,
     });
   }
@@ -46,7 +48,7 @@ export async function GET(
     fonts.push({
       name: "Inter",
       data: interData,
-      style: "normal" as const,
+      style: "normal",
       weight: 400,
     });
   }
@@ -80,34 +82,11 @@ export async function GET(
           {data.list.name}
         </h1>
 
-        {/* by @username, tags - Inter */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-            marginBottom: 32,
-            fontSize: 14,
-            color: "#6b7280",
-          }}
-        >
-          <span>by @{username}</span>
-          {data.tags.length > 0 && (
-            <>
-              <span>·</span>
-              <span>
-                {data.tags.slice(0, 3).map((t) => `#${t}`).join(" ")}
-              </span>
-            </>
-          )}
-        </div>
-
-        {/* Top 5 items - Inter */}
+        {/* Top 5 items - Inter, divide lines like UI */}
         <div
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: 12,
             flex: 1,
           }}
         >
@@ -119,10 +98,8 @@ export async function GET(
                 alignItems: "center",
                 justifyContent: "space-between",
                 gap: 24,
-                padding: "14px 20px",
-                background: i % 2 === 0 ? "#fff" : "#f8f8f8",
-                borderRadius: 8,
-                border: "1px solid #eee",
+                padding: "12px 0",
+                borderBottom: i < data.items.length - 1 ? "1px solid #e5e5e5" : "none",
               }}
             >
               <span
@@ -140,10 +117,10 @@ export async function GET(
               </span>
               <span
                 style={{
-                  fontSize: 18,
-                  fontWeight: 600,
-                  color: "#7d6ba0",
-                  minWidth: 36,
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: "#a3a3a3",
+                  minWidth: 24,
                   textAlign: "right",
                 }}
               >
@@ -153,21 +130,46 @@ export async function GET(
           ))}
         </div>
 
-        {/* Footer - Inter */}
+        {/* Footer: username badge, tento, link, date */}
         <div
           style={{
             marginTop: "auto",
+            paddingTop: 24,
+            borderTop: "1px solid #e5e5e5",
             display: "flex",
+            flexWrap: "wrap",
             alignItems: "center",
-            gap: 8,
+            gap: 12,
             fontSize: 14,
             color: "#6b7280",
-            paddingTop: 24,
           }}
         >
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "4px 10px",
+              borderRadius: 6,
+              border: "1px solid #e5e5e5",
+              fontSize: 13,
+              fontWeight: 600,
+              color: "#1a1a1a",
+            }}
+          >
+            @{username}
+          </span>
+          <span style={{ color: "#d4d4d4" }}>·</span>
           <span style={{ fontWeight: 600, color: "#1a1a1a" }}>tento</span>
-          <span>·</span>
+          <span style={{ color: "#d4d4d4" }}>·</span>
           <span>tento.so/u/{username}</span>
+          <span style={{ color: "#d4d4d4" }}>·</span>
+          <span>
+            {new Date(data.list.updatedAt).toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+            })}
+          </span>
         </div>
       </div>
     ),

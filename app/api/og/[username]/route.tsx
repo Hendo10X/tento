@@ -33,12 +33,14 @@ export async function GET(
     // Fallback if fetch fails
   }
 
-  const fonts = [];
+  const fonts: { name: string; data: ArrayBuffer; style: "normal"; weight: 400 }[] = [];
   if (adeliaData) {
+    const ab = new ArrayBuffer(adeliaData.length);
+    new Uint8Array(ab).set(adeliaData);
     fonts.push({
       name: "Adelia",
-      data: adeliaData,
-      style: "normal" as const,
+      data: ab,
+      style: "normal",
       weight: 400,
     });
   }
@@ -46,7 +48,7 @@ export async function GET(
     fonts.push({
       name: "Inter",
       data: interData,
-      style: "normal" as const,
+      style: "normal",
       weight: 400,
     });
   }
@@ -64,69 +66,31 @@ export async function GET(
           fontFamily: "Inter, system-ui",
         }}
       >
-        {/* Header - @username in Adelia, rest in Inter */}
+        {/* @username - Adelia */}
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
             marginBottom: 24,
           }}
         >
-          <div
+          <span
             style={{
-              width: 40,
-              height: 40,
-              borderRadius: 8,
-              background: "#7d6ba0",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "white",
-              fontSize: 20,
-              fontWeight: 700,
               fontFamily: adeliaData ? "Adelia" : "Inter, system-ui",
+              fontSize: 28,
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: 2,
+              color: "#1a1a1a",
             }}
           >
-            {data.name.charAt(0).toUpperCase()}
-          </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <span
-              style={{
-                fontFamily: adeliaData ? "Adelia" : "Inter, system-ui",
-                fontSize: 28,
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: 2,
-                color: "#1a1a1a",
-              }}
-            >
-              @{username}
-            </span>
-            {data.bio && (
-              <span
-                style={{
-                  fontSize: 16,
-                  color: "#6b7280",
-                  marginTop: 4,
-                  maxWidth: 500,
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {data.bio}
-              </span>
-            )}
-          </div>
+            @{username}
+          </span>
         </div>
 
-        {/* Top 3 lists preview - Inter */}
+        {/* Top 10 lists with divide lines - Inter, matches UI */}
         <div
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: 12,
             flex: 1,
           }}
         >
@@ -137,22 +101,10 @@ export async function GET(
                 display: "flex",
                 alignItems: "center",
                 gap: 16,
-                padding: "12px 16px",
-                background: "#f4f4f4",
-                borderRadius: 8,
-                borderLeft: "4px solid #7d6ba0",
+                padding: "12px 0",
+                borderBottom: i < data.lists.length - 1 ? "1px solid #e5e5e5" : "none",
               }}
             >
-              <span
-                style={{
-                  fontSize: 18,
-                  fontWeight: 600,
-                  color: "#7d6ba0",
-                  minWidth: 28,
-                }}
-              >
-                {String(i + 1).padStart(2, "0")}
-              </span>
               <span
                 style={{
                   fontSize: 16,
@@ -166,24 +118,61 @@ export async function GET(
               >
                 {list.name}
               </span>
+              <span
+                style={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: "#a3a3a3",
+                  minWidth: 24,
+                  textAlign: "right",
+                }}
+              >
+                {String(i + 1).padStart(2, "0")}
+              </span>
             </div>
           ))}
         </div>
 
-        {/* Footer - Inter */}
+        {/* Footer: username badge, tento, link, date */}
         <div
           style={{
             marginTop: "auto",
+            paddingTop: 24,
+            borderTop: "1px solid #e5e5e5",
             display: "flex",
+            flexWrap: "wrap",
             alignItems: "center",
-            gap: 8,
+            gap: 12,
             fontSize: 14,
             color: "#6b7280",
           }}
         >
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "4px 10px",
+              borderRadius: 6,
+              border: "1px solid #e5e5e5",
+              fontSize: 13,
+              fontWeight: 600,
+              color: "#1a1a1a",
+            }}
+          >
+            @{username}
+          </span>
+          <span style={{ color: "#d4d4d4" }}>·</span>
           <span style={{ fontWeight: 600, color: "#1a1a1a" }}>tento</span>
-          <span>·</span>
-          <span>Your favorite things in a list of ten</span>
+          <span style={{ color: "#d4d4d4" }}>·</span>
+          <span>tento.so/u/{username}</span>
+          <span style={{ color: "#d4d4d4" }}>·</span>
+          <span>
+            {new Date(data.date).toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+            })}
+          </span>
         </div>
       </div>
     ),

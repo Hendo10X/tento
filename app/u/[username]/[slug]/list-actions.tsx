@@ -1,23 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { Share2, Download, Check } from "lucide-react";
+import { Share2, Download, Check, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
-import { motion } from "motion/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type ListActionsProps = {
   username: string;
   slug: string;
   listName: string;
-  items: { value: string }[];
 };
 
 export function ListActions({
   username,
   slug,
   listName,
-  items,
 }: ListActionsProps) {
   const [copied, setCopied] = useState(false);
 
@@ -54,29 +56,32 @@ export function ListActions({
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <motion.button
-        onClick={handleShare}
-        whileTap={{ scale: 0.98 }}
-        whileHover={{ scale: 1.02 }}
-        className="flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-neutral-50"
-      >
-        {copied ? (
-          <Check className="h-4 w-4 text-green-600" />
-        ) : (
-          <Share2 className="h-4 w-4" />
-        )}
-        {copied ? "Copied!" : "Share"}
-      </motion.button>
-      <motion.button
-        onClick={handleDownload}
-        whileTap={{ scale: 0.98 }}
-        whileHover={{ scale: 1.02 }}
-        className="flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-neutral-50"
-      >
-        <Download className="h-4 w-4" />
-        Save image
-      </motion.button>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-neutral-50">
+        <Share2 className="h-3.5 w-3.5" />
+        Share
+        <ChevronDown className="h-3 w-3 opacity-60" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem
+          onClick={handleShare}
+          className="cursor-pointer gap-2"
+        >
+          {copied ? (
+            <Check className="h-4 w-4 text-green-600" />
+          ) : (
+            <Share2 className="h-4 w-4" />
+          )}
+          {copied ? "Copied!" : "Copy link"}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={handleDownload}
+          className="cursor-pointer gap-2"
+        >
+          <Download className="h-4 w-4" />
+          Save image
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
