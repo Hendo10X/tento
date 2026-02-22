@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/db/drizzle";
 import { user, profile, list, listItem, listTag } from "@/db/schema";
 import { headers } from "next/headers";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, ne, desc } from "drizzle-orm";
 
 function id() {
   return crypto.randomUUID();
@@ -64,11 +64,19 @@ export async function getListByUsernameAndSlug(username: string, slug: string) {
     db.select().from(listTag).where(eq(listTag.listId, l.id)),
   ]);
 
+  const otherLists = await db
+    .select({ id: list.id, name: list.name, slug: list.slug })
+    .from(list)
+    .where(and(eq(list.userId, u.id), ne(list.id, l.id)))
+    .orderBy(desc(list.updatedAt))
+    .limit(3);
+
   return {
     list: l,
     user: { username: u.username, name: u.name },
     items: items.sort((a, b) => Number(a.rank) - Number(b.rank)),
     tags: tags.map((t) => t.tag),
+    otherLists,
   };
 }
 

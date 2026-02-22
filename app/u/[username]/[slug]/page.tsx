@@ -1,8 +1,42 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { AnimatedLink } from "@/components/animated-link";
 import { notFound } from "next/navigation";
 import { getListByUsernameAndSlug } from "@/server/profile";
+import { getBaseURL } from "@/lib/url";
+import { ListActions } from "./list-actions";
+import { ListProfileSection } from "./list-profile-section";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ username: string; slug: string }>;
+}): Promise<Metadata> {
+  const { username, slug } = await params;
+  const data = await getListByUsernameAndSlug(username, slug);
+  if (!data) return {};
+
+  const base = getBaseURL();
+
+  return {
+    title: `${data.list.name} by @${username} | Tento`,
+    description: data.items
+      .slice(0, 3)
+      .map((i) => i.value)
+      .join(", ") + (data.items.length > 3 ? "…" : ""),
+    openGraph: {
+      title: data.list.name,
+      description: `A top ten list by @${username}`,
+      images: [`${base}/api/og/${username}/${slug}`],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: data.list.name,
+      description: `A top ten list by @${username}`,
+      images: [`${base}/api/og/${username}/${slug}`],
+    },
+  };
+}
 
 export default async function ListPage({
   params,
@@ -13,7 +47,7 @@ export default async function ListPage({
   const data = await getListByUsernameAndSlug(username, slug);
   if (!data) notFound();
 
-  const { list, user, items, tags } = data;
+  const { list, user, items, tags, otherLists } = data;
 
   return (
     <div className="min-h-screen bg-background">
@@ -69,6 +103,12 @@ export default async function ListPage({
                 year: "numeric",
               })}
             </span>
+            <span className="text-neutral-300">·</span>
+            <ListActions
+              username={username}
+              slug={slug}
+              listName={list.name}
+            />
           </div>
         </header>
 
@@ -87,6 +127,11 @@ export default async function ListPage({
             </li>
           ))}
         </ol>
+
+        <ListProfileSection
+          username={username}
+          otherLists={otherLists}
+        />
       </main>
     </div>
   );
