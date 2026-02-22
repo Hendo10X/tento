@@ -10,8 +10,10 @@
   --color-background: #fdfdfc;
   --color-foreground: #1a1a1a;
   --color-muted: #6b7280;
-  --color-tento-lavender: #c6abde;
-  --color-tento-lavender-hover: #b797d4;
+  --color-tento-vivid-pink: #ff00aa;
+  --color-tento-vivid-pink-hover: #e60099;
+  --color-tento-lavender: #7d6ba0;
+  --color-tento-lavender-hover: #6d5b8e;
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-heading: "Adelia", cursive;
 }
@@ -21,6 +23,26 @@ body {
   color: var(--color-foreground);
   font-family: var(--font-sans);
   letter-spacing: -0.02em;
+}
+
+/* Primary: lavender */
+@utility bg-tento-lavender {
+  background-color: var(--color-tento-lavender);
+}
+@utility bg-tento-lavender-hover {
+  background-color: var(--color-tento-lavender-hover);
+}
+@utility text-tento-lavender {
+  color: var(--color-tento-lavender);
+}
+@utility border-tento-lavender {
+  border-color: var(--color-tento-lavender);
+}
+@utility ring-tento-lavender {
+  --tw-ring-color: var(--color-tento-lavender);
+}
+@utility border-tento-lavender\/50 {
+  border-color: color-mix(in srgb, var(--color-tento-lavender) 50%, transparent);
 }
 
 .topic-card {

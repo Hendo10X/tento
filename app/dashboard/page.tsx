@@ -92,12 +92,12 @@ function ListFormModal({
 }) {
   const [listName, setListName] = useState(initialData?.name ?? "Top Ten ");
   const [items, setItems] = useState<string[]>(
-    initialData?.items ?? Array(10).fill("")
+    initialData?.items ?? Array(10).fill(""),
   );
   const [tags, setTags] = useState<string[]>(initialData?.tags ?? []);
   const [tagInput, setTagInput] = useState("");
   const [filledCount, setFilledCount] = useState(
-    initialData?.items?.filter((v) => v.trim()).length ?? 0
+    initialData?.items?.filter((v) => v.trim()).length ?? 0,
   );
   const [loading, setLoading] = useState(false);
 
@@ -108,7 +108,7 @@ function ListFormModal({
       setTags(initialData?.tags ?? []);
       setTagInput("");
       setFilledCount(
-        (initialData?.items ?? []).filter((v) => v.trim()).length ?? 0
+        (initialData?.items ?? []).filter((v) => v.trim()).length ?? 0,
       );
     }
   }, [open, initialData]);
@@ -270,14 +270,12 @@ function ListFormModal({
                 <Badge
                   key={tag}
                   variant="secondary"
-                  className="gap-1 bg-neutral-100 pr-1 text-xs font-normal text-neutral-700"
-                >
+                  className="gap-1 bg-neutral-100 pr-1 text-xs font-normal text-neutral-700">
                   {tag}
                   <button
                     type="button"
                     onClick={() => removeTag(tag)}
-                    className="ml-0.5 rounded-full p-0.5 hover:bg-neutral-200"
-                  >
+                    className="ml-0.5 rounded-full p-0.5 hover:bg-neutral-200">
                     <X className="h-3 w-3" />
                   </button>
                 </Badge>
@@ -299,8 +297,7 @@ function ListFormModal({
                       key={tag}
                       type="button"
                       onClick={() => addTag(tag)}
-                      className="rounded-full border border-neutral-200 px-2.5 py-0.5 text-xs text-neutral-500 transition-colors hover:border-tento-lavender hover:text-tento-lavender"
-                    >
+                      className="rounded-full border border-neutral-200 px-2.5 py-0.5 text-xs text-neutral-500 transition-colors hover:border-tento-lavender hover:text-tento-lavender">
                       {tag}
                     </button>
                   ))}
@@ -311,8 +308,7 @@ function ListFormModal({
           <Button
             onClick={handleSubmit}
             disabled={loading}
-            className="h-9 w-full cursor-pointer bg-tento-lavender text-xs font-semibold text-white hover:bg-tento-lavender-hover disabled:opacity-60"
-          >
+            className="h-9 w-full cursor-pointer bg-tento-lavender text-xs font-semibold text-white hover:bg-tento-lavender-hover disabled:opacity-60">
             {loading ? (
               <span className="loading-dots">
                 <span></span>
@@ -354,7 +350,10 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && sessionStorage.getItem(AVATAR_UPDATED_KEY)) {
+    if (
+      typeof window !== "undefined" &&
+      sessionStorage.getItem(AVATAR_UPDATED_KEY)
+    ) {
       sessionStorage.removeItem(AVATAR_UPDATED_KEY);
       refetchSession?.();
     }
@@ -387,7 +386,9 @@ export default function Dashboard() {
   };
 
   const handleShare = async (list: ListWithDetails) => {
-    const username = (session?.user?.name || session?.user?.username || "user").toString().toLowerCase();
+    const username = (session?.user?.name || session?.user?.username || "user")
+      .toString()
+      .toLowerCase();
     const url = `${window.location.origin}/u/${username}/${list.slug}`;
     try {
       await navigator.clipboard.writeText(url);
@@ -397,31 +398,29 @@ export default function Dashboard() {
     }
   };
 
-  const editInitialData: { name: string; items: string[]; tags: string[] } | undefined =
-    editList
-      ? (() => {
-          const itemValues = editList.items.map((i: { value: string }) => i.value);
-          const padded: string[] = [
-            ...itemValues,
-            ...Array(10 - itemValues.length).fill(""),
-          ].slice(0, 10);
-          return {
-            name: editList.name,
-            items: padded,
-            tags: editList.tags,
-          };
-        })()
-      : undefined;
+  const editInitialData:
+    | { name: string; items: string[]; tags: string[] }
+    | undefined = editList
+    ? (() => {
+        const itemValues = editList.items.map(
+          (i: { value: string }) => i.value,
+        );
+        const padded: string[] = [
+          ...itemValues,
+          ...Array(10 - itemValues.length).fill(""),
+        ].slice(0, 10);
+        return {
+          name: editList.name,
+          items: padded,
+          tags: editList.tags,
+        };
+      })()
+    : undefined;
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="flex items-center justify-between px-6 py-3 sm:py-5">
-        <Image
-          src="/images/tentologo.svg"
-          alt="Tento"
-          width={44}
-          height={43}
-        />
+      <header className="flex items-center justify-between px-6 py-5">
+        <Image src="/images/tentologo.svg" alt="Tento" width={44} height={43} />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -429,15 +428,14 @@ export default function Dashboard() {
               whileTap={{ scale: 0.98 }}
               whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 400, damping: 28 }}
-              className="flex cursor-pointer items-center gap-2 rounded-full py-1 pl-1 pr-3 transition-colors hover:bg-neutral-50"
-            >
+              className="flex cursor-pointer items-center gap-2 rounded-full py-1 pl-1 pr-3 transition-colors hover:bg-neutral-50">
               {session?.user?.image ? (
                 session.user.image.startsWith("data:") ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                  src={session.user.image}
-                  alt={displayName}
-                  className="h-8 w-8 rounded-full object-cover"
+                    src={session.user.image}
+                    alt={displayName}
+                    className="h-8 w-8 rounded-full object-cover"
                   />
                 ) : (
                   <Image
@@ -468,21 +466,23 @@ export default function Dashboard() {
             <DropdownMenuItem asChild>
               <Link
                 href={`/u/${(session?.user?.name || session?.user?.username || "user").toString().toLowerCase()}`}
-                className="flex cursor-pointer items-center gap-2"
-              >
+                className="flex cursor-pointer items-center gap-2">
                 <User className="h-4 w-4" />
                 Profile
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer gap-2">
-              <Settings className="h-4 w-4" />
-              Settings
+            <DropdownMenuItem asChild>
+              <Link
+                href="/settings"
+                className="flex cursor-pointer items-center gap-2">
+                <Settings className="h-4 w-4" />
+                Settings
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="cursor-pointer gap-2 text-red-600 focus:text-red-600"
-              onClick={handleLogout}
-            >
+              onClick={handleLogout}>
               <LogOut className="h-4 w-4" />
               Log out
             </DropdownMenuItem>
@@ -490,15 +490,14 @@ export default function Dashboard() {
         </DropdownMenu>
       </header>
 
-      <main className="px-6 pb-12 pt-2 sm:pt-4">
+      <main className="px-6 pb-12 pt-4">
         <div className="mx-auto max-w-xl space-y-5">
           <div className="flex items-center justify-between gap-3">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCreateOpen(true)}
-              className="cursor-pointer gap-2 border-neutral-200 text-sm font-medium text-foreground"
-            >
+              className="cursor-pointer gap-2 border-neutral-200 text-sm font-medium text-foreground">
               Create a new list
               <Plus className="h-4 w-4" />
             </Button>
@@ -511,8 +510,7 @@ export default function Dashboard() {
                       ? "bg-neutral-100 text-foreground"
                       : "text-neutral-500 hover:bg-neutral-50 hover:text-foreground"
                   }`}
-                  aria-label="List view"
-                >
+                  aria-label="List view">
                   <LayoutList className="h-4 w-4" />
                 </button>
                 <button
@@ -522,8 +520,7 @@ export default function Dashboard() {
                       ? "bg-neutral-100 text-foreground"
                       : "text-neutral-500 hover:bg-neutral-50 hover:text-foreground"
                   }`}
-                  aria-label="Grid view"
-                >
+                  aria-label="Grid view">
                   <LayoutGrid className="h-4 w-4" />
                 </button>
               </div>
@@ -542,15 +539,13 @@ export default function Dashboard() {
                 viewMode === "list"
                   ? "flex flex-col gap-4"
                   : "grid grid-cols-1 gap-4 sm:grid-cols-2"
-              }`}
-            >
+              }`}>
               {lists.map((l: ListWithDetails) => (
                 <motion.div
                   key={l.id}
                   layout
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                  className="flex items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-background px-5 py-4 transition-[opacity,filter,border-color] duration-300 ease-out group-has-[:hover]/cards:opacity-50 group-has-[:hover]/cards:blur-[1px] hover:opacity-100! hover:blur-none! hover:border-tento-lavender/50"
-                >
+                  className="flex items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-background px-5 py-4 transition-[opacity,filter,border-color] duration-300 ease-out group-has-[:hover]/cards:opacity-50 group-has-[:hover]/cards:blur-[1px] hover:opacity-100! hover:blur-none! hover:border-tento-lavender/50">
                   <div className="min-w-0 flex-1">
                     <Link
                       href={`/u/${(session?.user?.name || session?.user?.username || "user").toString().toLowerCase()}/${l.slug}`}
@@ -558,8 +553,7 @@ export default function Dashboard() {
                         viewMode === "grid"
                           ? "line-clamp-2 wrap-break-word"
                           : "truncate"
-                      }`}
-                    >
+                      }`}>
                       {l.name}
                     </Link>
                     {(l.tags.length > 0 || l.createdAt) && (
@@ -567,18 +561,20 @@ export default function Dashboard() {
                         {l.tags.map((tag: string) => (
                           <span
                             key={tag}
-                            className="rounded-full border border-neutral-200 px-2.5 py-0.5 text-xs text-neutral-500"
-                          >
+                            className="rounded-full border border-neutral-200 px-2.5 py-0.5 text-xs text-neutral-500">
                             {tag}
                           </span>
                         ))}
                         {l.createdAt && (
                           <span className="text-xs text-neutral-400">
-                            {new Date(l.createdAt).toLocaleDateString(undefined, {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })}
+                            {new Date(l.createdAt).toLocaleDateString(
+                              undefined,
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              },
+                            )}
                           </span>
                         )}
                       </div>
@@ -588,22 +584,19 @@ export default function Dashboard() {
                     <button
                       onClick={() => handleEdit(l)}
                       className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-foreground"
-                      aria-label="Edit"
-                    >
+                      aria-label="Edit">
                       <Pencil className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => handleShare(l)}
                       className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-foreground"
-                      aria-label="Share"
-                    >
+                      aria-label="Share">
                       <Share2 className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteClick(l.id)}
                       className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-red-50 hover:text-red-500"
-                      aria-label="Delete"
-                    >
+                      aria-label="Delete">
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -633,21 +626,20 @@ export default function Dashboard() {
       />
       <AlertDialog
         open={deleteListId !== null}
-        onOpenChange={(open) => !open && setDeleteListId(null)}
-      >
+        onOpenChange={(open) => !open && setDeleteListId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete this list?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. The list and all its items will be permanently removed.
+              This action cannot be undone. The list and all its items will be
+              permanently removed.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
-              className="bg-red-500 text-white hover:bg-red-500/90"
-            >
+              className="bg-red-500 text-white hover:bg-red-500/90">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

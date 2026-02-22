@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { LockScroll } from "@/components/lock-scroll";
 
 const topTenCards = [
   {
@@ -149,8 +150,10 @@ const topTenCards = [
 
 export default function Home() {
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-background">
-      <div className="flex h-full flex-col items-center justify-center gap-3 px-6 sm:gap-5">
+    <>
+      <LockScroll />
+      <div className="fixed inset-0 z-0 flex flex-col overflow-hidden bg-background md:relative md:h-screen md:w-full">
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 px-5 py-4 sm:gap-5 sm:px-6 sm:py-0">
         <Image
           src="/images/tentologo.svg"
           alt="Tento"
@@ -204,5 +207,6 @@ export default function Home() {
         ))}
       </div>
     </div>
+    </>
   );
 }

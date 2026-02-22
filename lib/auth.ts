@@ -6,6 +6,9 @@ import { username } from "better-auth/plugins";
 import * as schema from "../db/schema";
 
 export const auth = betterAuth({
+  user: {
+    deleteUser: { enabled: true },
+  },
   emailAndPassword: {
     enabled: true,
   },
