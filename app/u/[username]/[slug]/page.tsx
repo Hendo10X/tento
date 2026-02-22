@@ -1,8 +1,42 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { AnimatedLink } from "@/components/animated-link";
 import { notFound } from "next/navigation";
 import { getListByUsernameAndSlug } from "@/server/profile";
+import { getBaseURL } from "@/lib/url";
+import { ListActions } from "./list-actions";
+import { ListProfileSection } from "./list-profile-section";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ username: string; slug: string }>;
+}): Promise<Metadata> {
+  const { username, slug } = await params;
+  const data = await getListByUsernameAndSlug(username, slug);
+  if (!data) return {};
+
+  const base = getBaseURL();
+
+  return {
+    title: `${data.list.name} by @${username} | Tento`,
+    description: data.items
+      .slice(0, 3)
+      .map((i) => i.value)
+      .join(", ") + (data.items.length > 3 ? "…" : ""),
+    openGraph: {
+      title: data.list.name,
+      description: `A top ten list by @${username}`,
+      images: [`${base}/api/og/${username}/${slug}`],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: data.list.name,
+      description: `A top ten list by @${username}`,
+      images: [`${base}/api/og/${username}/${slug}`],
+    },
+  };
+}
 
 export default async function ListPage({
   params,
@@ -13,7 +47,7 @@ export default async function ListPage({
   const data = await getListByUsernameAndSlug(username, slug);
   if (!data) notFound();
 
-  const { list, user, items, tags } = data;
+  const { list, user, items, tags, otherLists } = data;
 
   return (
     <div className="min-h-screen bg-background">
@@ -50,9 +84,17 @@ export default async function ListPage({
 
       <main className="mx-auto max-w-2xl px-6 pb-16 pt-4">
         <header className="mb-10">
-          <h1 className="font-heading text-2xl font-bold uppercase leading-tight tracking-wide text-foreground">
-            {list.name}
-          </h1>
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <h1 className="font-heading text-2xl font-bold uppercase leading-tight tracking-wide text-foreground">
+              {list.name}
+            </h1>
+            <ListActions
+              username={username}
+              slug={slug}
+              listName={list.name}
+              items={items}
+            />
+          </div>
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-neutral-500">
             {tags.map((tag) => (
               <span
@@ -87,6 +129,11 @@ export default async function ListPage({
             </li>
           ))}
         </ol>
+
+        <ListProfileSection
+          username={username}
+          otherLists={otherLists}
+        />
       </main>
     </div>
   );

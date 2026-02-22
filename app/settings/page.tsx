@@ -32,8 +32,9 @@ export default function SettingsPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   useEffect(() => {
-    if (session?.user?.name) setDisplayName(session.user.name);
-    else if ((session?.user as { username?: string })?.username)
+    if (!session?.user) return;
+    if (session.user.name) setDisplayName(session.user.name);
+    else if ((session.user as { username?: string }).username)
       setDisplayName((session.user as { username?: string }).username ?? "");
   }, [session]);
 

@@ -1,12 +1,47 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { AnimatedLink } from "@/components/animated-link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getProfileByUsername } from "@/server/profile";
+import { getBaseURL } from "@/lib/url";
 import { ProfileEdit } from "./profile-edit";
 import { ProfileListCards } from "./profile-list-cards";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}): Promise<Metadata> {
+  const { username } = await params;
+  const profile = await getProfileByUsername(username);
+  if (!profile) return {};
+
+  const displayName =
+    profile.user.name || profile.user.username || "User";
+  const base = getBaseURL();
+
+  return {
+    title: `@${username} – ${displayName} | Tento`,
+    description:
+      profile.bio?.trim() || `See @${username}'s top ten lists on Tento`,
+    openGraph: {
+      title: `@${username} – ${displayName}`,
+      description:
+        profile.bio?.trim() || `See @${username}'s top ten lists on Tento`,
+      images: [`${base}/api/og/${username}`],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `@${username} – ${displayName}`,
+      description:
+        profile.bio?.trim() || `See @${username}'s top ten lists on Tento`,
+      images: [`${base}/api/og/${username}`],
+    },
+  };
+}
 
 export default async function ProfilePage({
   params,
