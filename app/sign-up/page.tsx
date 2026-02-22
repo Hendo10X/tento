@@ -154,7 +154,7 @@ export default function SignUp() {
 
     if (error) {
       toast.error(error.message);
-      setErrors({ form: error.message });
+      setErrors({ form: error.message ?? "Something went wrong" });
     }
 
     setLoading(false);

@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -59,6 +59,63 @@ export const account = pgTable(
   (table) => [index("account_userId_idx").on(table.userId)],
 );
 
+export const profile = pgTable("profile", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .unique()
+    .references(() => user.id, { onDelete: "cascade" }),
+  bio: text("bio"),
+});
+
+export const list = pgTable(
+  "list",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    slug: text("slug")
+      .notNull()
+      .default(sql`'list-' || substr(gen_random_uuid()::text, 1, 8)`),
+    name: text("name").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("list_userId_idx").on(table.userId),
+    index("list_userId_slug_idx").on(table.userId, table.slug),
+  ]
+);
+
+export const listItem = pgTable(
+  "list_item",
+  {
+    id: text("id").primaryKey(),
+    listId: text("list_id")
+      .notNull()
+      .references(() => list.id, { onDelete: "cascade" }),
+    rank: text("rank").notNull(),
+    value: text("value").notNull(),
+  },
+  (table) => [index("list_item_listId_idx").on(table.listId)]
+);
+
+export const listTag = pgTable(
+  "list_tag",
+  {
+    id: text("id").primaryKey(),
+    listId: text("list_id")
+      .notNull()
+      .references(() => list.id, { onDelete: "cascade" }),
+    tag: text("tag").notNull(),
+  },
+  (table) => [index("list_tag_listId_idx").on(table.listId)]
+);
+
 export const verification = pgTable(
   "verification",
   {
@@ -75,9 +132,11 @@ export const verification = pgTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
-export const userRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(user, ({ one, many }) => ({
   sessions: many(session),
   accounts: many(account),
+  lists: many(list),
+  profile: one(profile),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -91,5 +150,35 @@ export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
     fields: [account.userId],
     references: [user.id],
+  }),
+}));
+
+export const profileRelations = relations(profile, ({ one }) => ({
+  user: one(user, {
+    fields: [profile.userId],
+    references: [user.id],
+  }),
+}));
+
+export const listRelations = relations(list, ({ one, many }) => ({
+  user: one(user, {
+    fields: [list.userId],
+    references: [user.id],
+  }),
+  items: many(listItem),
+  tags: many(listTag),
+}));
+
+export const listItemRelations = relations(listItem, ({ one }) => ({
+  list: one(list, {
+    fields: [listItem.listId],
+    references: [list.id],
+  }),
+}));
+
+export const listTagRelations = relations(listTag, ({ one }) => ({
+  list: one(list, {
+    fields: [listTag.listId],
+    references: [list.id],
   }),
 }));

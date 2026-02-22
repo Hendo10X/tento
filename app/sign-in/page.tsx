@@ -58,7 +58,7 @@ export default function SignIn() {
 
     if (error) {
       toast.error(error.message);
-      setErrors({ form: error.message });
+      setErrors({ form: error.message ?? "Something went wrong" });
     }
 
     setLoading(false);
