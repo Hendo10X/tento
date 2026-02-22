@@ -415,7 +415,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="flex items-center justify-between px-6 py-5">
+      <header className="flex items-center justify-between px-6 py-3 sm:py-5">
         <Image
           src="/images/tentologo.svg"
           alt="Tento"
@@ -490,7 +490,7 @@ export default function Dashboard() {
         </DropdownMenu>
       </header>
 
-      <main className="px-6 pb-12 pt-4">
+      <main className="px-6 pb-12 pt-2 sm:pt-4">
         <div className="mx-auto max-w-xl space-y-5">
           <div className="flex items-center justify-between gap-3">
             <Button

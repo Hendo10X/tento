@@ -17,7 +17,7 @@ export default async function ListPage({
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="flex items-center justify-between px-6 py-5">
+      <header className="flex items-center justify-between px-6 py-3 sm:py-5">
         <Link href="/" className="shrink-0">
           <Image
             src="/images/tentologo.svg"
@@ -48,7 +48,7 @@ export default async function ListPage({
         </AnimatedLink>
       </header>
 
-      <main className="mx-auto max-w-2xl px-6 pb-16 pt-4">
+      <main className="mx-auto max-w-2xl px-6 pb-16 pt-2 sm:pt-4">
         <header className="mb-10">
           <h1 className="font-heading text-2xl font-bold uppercase leading-tight tracking-wide text-foreground">
             {list.name}

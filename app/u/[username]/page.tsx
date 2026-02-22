@@ -28,7 +28,7 @@ export default async function ProfilePage({
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="flex items-center justify-between px-6 py-5">
+      <header className="flex items-center justify-between px-6 py-3 sm:py-5">
         <Link href="/" className="shrink-0">
           <Image
             src="/images/tentologo.svg"
@@ -57,7 +57,7 @@ export default async function ProfilePage({
         </AnimatedLink>
       </header>
 
-      <main className="mx-auto max-w-3xl px-4 sm:px-6 pt-6 pb-20">
+      <main className="mx-auto max-w-3xl px-4 pb-20 pt-3 sm:px-6 sm:pt-6">
         <div className="flex flex-col items-center">
           <div className="relative">
             {profile.user.image ? (
