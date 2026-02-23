@@ -385,10 +385,12 @@ export default function Dashboard() {
     }
   };
 
+  const profileUsername =
+    (session?.user as { username?: string })?.username ??
+    (session?.user?.name || "user");
+
   const handleShare = async (list: ListWithDetails) => {
-    const username = (session?.user?.name || session?.user?.username || "user")
-      .toString()
-      .toLowerCase();
+    const username = profileUsername.toString().toLowerCase();
     const url = `${window.location.origin}/u/${username}/${list.slug}`;
     try {
       await navigator.clipboard.writeText(url);
@@ -459,13 +461,13 @@ export default function Dashboard() {
           <DropdownMenuContent align="end" className="w-44">
             <DropdownMenuLabel className="font-normal">
               <span className="text-sm text-neutral-500">
-                tento/{session?.user?.name || "user"}
+                tento/{profileUsername}
               </span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link
-                href={`/u/${(session?.user?.name || session?.user?.username || "user").toString().toLowerCase()}`}
+                href={`/u/${profileUsername.toString().toLowerCase()}`}
                 className="flex cursor-pointer items-center gap-2">
                 <User className="h-4 w-4" />
                 Profile
@@ -548,7 +550,7 @@ export default function Dashboard() {
                   className="flex items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-background px-5 py-4 transition-[opacity,filter,border-color] duration-300 ease-out group-has-[:hover]/cards:opacity-50 group-has-[:hover]/cards:blur-[1px] hover:opacity-100! hover:blur-none! hover:border-tento-lavender/50">
                   <div className="min-w-0 flex-1">
                     <Link
-                      href={`/u/${(session?.user?.name || session?.user?.username || "user").toString().toLowerCase()}/${l.slug}`}
+                      href={`/u/${profileUsername.toString().toLowerCase()}/${l.slug}`}
                       className={`block text-sm font-medium text-foreground ${
                         viewMode === "grid"
                           ? "line-clamp-2 wrap-break-word"

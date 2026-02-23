@@ -9,6 +9,7 @@ import { getProfileByUsername } from "@/server/profile";
 import { getBaseURL } from "@/lib/url";
 import { ProfileEdit } from "./profile-edit";
 import { ProfileListCards } from "./profile-list-cards";
+import { ProfileShareButton } from "./profile-share-button";
 
 export async function generateMetadata({
   params,
@@ -128,9 +129,12 @@ export default async function ProfilePage({
             )}
           </div>
 
-          <h1 className="mt-3 font-heading text-xl font-bold uppercase tracking-wide text-foreground">
-            {displayName}
-          </h1>
+          <div className="mt-3 flex items-center justify-center gap-2">
+            <h1 className="font-heading text-xl font-bold uppercase tracking-wide text-foreground">
+              {displayName}
+            </h1>
+            <ProfileShareButton username={username} />
+          </div>
 
           <p className="mt-1 text-sm text-neutral-500">
             {profile.bio?.trim() || "No bio"}
